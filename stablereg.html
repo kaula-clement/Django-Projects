@@ -1,0 +1,258 @@
+{%load static%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examination Council of Zambia</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" >
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.3/css/font-awesome.css">
+    <link rel="stylesheet" href="{% static 'css/regbasestyle.css'%}">
+</head>
+<body>
+    <!-- MultiStep Form -->
+<div class="container-fluid" id="grad1">
+    <div class="row justify-content-center mt-0">
+        <div class="col-11 col-sm-9 col-md-7 col-lg-11 text-center p-0 mt-3 mb-2">
+            <div class="card px-0 pt-4 pb-0 mt-3 mb-3">
+                <h2><strong>Sign Up</strong></h2>
+                <div class="row">
+                    <div class="col-md-12 mx-0">
+                        <form id="msform">
+                            {% csrf_token %}
+                            <!-- progressbar -->
+                            <ul id="progressbar">
+                                <li class="active" id="account"><strong>Account</strong></li>
+                                <li id="personal"><strong>Personal</strong></li>
+                                <li id="payment"><strong>Payment</strong></li>
+                                <li id="availability"><strong>Availability</strong></li>
+                                <li id="confirm"><strong>Finish</strong></li>
+                            </ul>
+                            <!-- fieldsets -->
+                            <fieldset>
+                                <div class="form-card">
+                                    <h2 class="fs-title">Account Information</h2>
+                                    {{form.first_name}}
+                                    {{form.middle_name}}
+                                    {{form.last_name}}         
+                                    <div>
+                                        {{form.subject.label}}
+                                         {{form.subject}}
+                                    </div>
+                                    <div>
+                                        {{form.position.label}}
+                                        {{form.position}}
+                                    </div>
+                                    
+                                </div>
+                                <input type="button" name="next" class="next action-button" value="Next Step"/>
+                            </fieldset>
+                            <fieldset>
+                                <div class="form-card">
+                                    <h2 class="fs-title">Personal Information</h2>
+                                    {{form.NRC}}
+                                    {{form.cell_Number}}
+                                    {{form.email}}
+                                    {{form.Address}}
+
+                                    <div>
+                                        {{form.province.label}}
+                                        {{form.province}}
+                                    </div>
+                                    <div>
+                                        {{form.district.label}}
+                                        {{form.district}}
+                                    </div>
+
+                                </div>
+                                <input type="button" name="previous" class="previous action-button-previous" value="Previous"/>
+                                <input type="button" name="next" class="next action-button" value="Next Step"/>
+                            </fieldset>
+                            <fieldset>
+                                <div class="form-card">
+                                    <h2 class="fs-title">Payment Information</h2>
+                                   <div class="from-row">
+                                    <label class="pay">Bank Name</label>
+                                        {{form.bank}}
+                                        <br>
+                                    </div>
+    
+                                    <div class="form-row">
+                                    <label class="pay">Bank Branch Name</label>
+                                        {{form.branch}}
+                                        <br>
+                                    </div>
+                                    {{form.AccountDetails}}
+                                    {{form.TPIN}}
+                                    
+                                </div>
+                                <input type="button" name="previous" class="previous action-button-previous" value="Previous"/>
+                                <input type="button" name="next" class="next action-button" value="Confirm"/>
+                            </fieldset>
+
+                            <fieldset>
+                                <div class="form-card">
+                                    <h2 class="fs-title">Availability Information</h2>
+                                   
+                                 <label for="availability">Are you available for the marking session?</label>
+                                   {{form.availability}}
+                                   </p>
+                                    
+                                </div>
+                                <input type="button" name="previous" class="previous action-button-previous" value="Previous"/>
+                                <input type="button" name="next" class="next action-button" value="Next step"/>
+                            </fieldset>
+                            <fieldset>
+                                
+                                <input type="button" name="next" class="next action-button" value="Review "/>
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </fieldset>
+                            <fieldset>
+                                <div class="form-card">
+                                    <h2 class="fs-title text-center">Success !</h2>
+                                    <br><br>
+                                    <div class="row justify-content-center">
+                                        <div class="col-3">
+                                            <img src="https://img.icons8.com/color/96/000000/ok--v2.png" class="fit-image">
+                                        </div>
+                                    </div>
+                                    <br><br>
+                                    <div class="row justify-content-center">
+                                        <div class="col-7 text-center">
+                                            <h5>You Have Successfully Signed Up</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+<!--  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> -->
+<script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+<script>
+    $("#id_province").change(function () {
+        const provinceID = $(this).val();  // get the selected subject ID from the HTML dropdown list 
+        $.ajax({                       // initialize an AJAX request
+            type: "POST",
+            url: '{% url "load-districts" %}',
+            data: {
+                'province_id': provinceID,       // add the country id to the POST parameters
+                'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
+            },
+            success: function (data) {   // `data` is from `get_topics_ajax` view function
+                let html_data = '<option value="">Choose a district</option>';
+                data.forEach(function (data) {
+                    html_data += `<option value="${data.id}">${data.name}</option>`
+                });
+                $("#id_district").html(html_data); // replace the contents of the topic input with the data that came from the server
+            }
+        });
+    });
+</script>
+<script>
+  $("#id_bank").change(function () {
+      const bankID = $(this).val();  // get the selected  ID from the HTML dropdown list 
+      $.ajax({                       // initialize an AJAX request
+          type: "POST",
+          url: '{% url "load-bank-branches" %}',
+          data: {
+              'bank_id': bankID,       // add the  id to the POST parameters
+              'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
+          },
+          success: function (data) {   // `data` is from `load-bank-branches` view function
+              let html_data = '<option value="">Choose a bank branch</option>';
+              data.forEach(function (data) {
+                  html_data += `<option value="${data.id}">${data.name}</option>`
+              });
+              $("#id_branch").html(html_data); // replace the contents  with the data that came from the server
+          }
+      });
+  });
+</script>
+<script>
+    $(document).ready(function(){
+    
+        var current_fs, next_fs, previous_fs; //fieldsets
+        var opacity;
+        
+        $(".next").click(function(){
+            
+            current_fs = $(this).parent();
+            next_fs = $(this).parent().next();
+            
+            //Add Class Active
+            $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
+            
+            //show the next fieldset
+            next_fs.show(); 
+            //hide the current fieldset with style
+            current_fs.animate({opacity: 0}, {
+                step: function(now) {
+                    // for making fielset appear animation
+                    opacity = 1 - now;
+        
+                    current_fs.css({
+                        'display': 'none',
+                        'position': 'relative'
+                    });
+                    next_fs.css({'opacity': opacity});
+                }, 
+                duration: 600
+            });
+        });
+        
+        $(".previous").click(function(){
+            
+            current_fs = $(this).parent();
+            previous_fs = $(this).parent().prev();
+            
+            //Remove class active
+            $("#progressbar li").eq($("fieldset").index(current_fs)).removeClass("active");
+            
+            //show the previous fieldset
+            previous_fs.show();
+        
+            //hide the current fieldset with style
+            current_fs.animate({opacity: 0}, {
+                step: function(now) {
+                    // for making fielset appear animation
+                    opacity = 1 - now;
+        
+                    current_fs.css({
+                        'display': 'none',
+                        'position': 'relative'
+                    });
+                    previous_fs.css({'opacity': opacity});
+                }, 
+                duration: 600
+            });
+        });
+        
+        $('.radio-group .radio').click(function(){
+            $(this).parent().find('.radio').removeClass('selected');
+            $(this).addClass('selected');
+        });
+        
+        $(".submit").click(function(){
+            return false;
+        })
+            
+        });
+</script>
+
+
+</body>
+
+
+
+
+
